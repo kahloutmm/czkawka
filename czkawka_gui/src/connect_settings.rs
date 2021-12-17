@@ -2,8 +2,8 @@ use czkawka_core::common_messages::Messages;
 use czkawka_core::duplicate::HashType;
 use czkawka_core::fl;
 use directories_next::ProjectDirs;
-use gtk::prelude::*;
-use gtk::{LabelBuilder, ResponseType, Window};
+use gtk4::prelude::*;use gtk4::Inhibit;
+use gtk4::{LabelBuilder, ResponseType, Window};
 use image::imageops::FilterType;
 use img_hash::HashAlg;
 use std::collections::BTreeMap;
@@ -24,9 +24,9 @@ pub fn connect_settings(gui_data: &GuiData) {
 
         let window_settings = gui_data.settings.window_settings.clone();
 
-        window_settings.connect_delete_event(move |window, _| {
+        window_settings.connect_close_request(|window| {
             window.hide();
-            gtk::Inhibit(true)
+            gtk4::Inhibit(true)
         });
     }
 
@@ -91,7 +91,7 @@ pub fn connect_settings(gui_data: &GuiData) {
 
             button_settings_duplicates_clear_cache.connect_clicked(move |_| {
                 let dialog = create_clear_cache_dialog(fl!("cache_clear_duplicates_title"), &settings_window);
-                dialog.show_all();
+                dialog.show();
 
                 let text_view_errors = text_view_errors.clone();
                 let entry_settings_cache_file_minimal_size = entry_settings_cache_file_minimal_size.clone();
@@ -119,7 +119,7 @@ pub fn connect_settings(gui_data: &GuiData) {
                             }
 
                             messages.messages.push(fl!("cache_properly_cleared"));
-                            text_view_errors.buffer().unwrap().set_text(messages.create_messages_text().as_str());
+                            text_view_errors.buffer().set_text(messages.create_messages_text().as_str());
                         }
                     }
                     dialog.close();
@@ -133,7 +133,7 @@ pub fn connect_settings(gui_data: &GuiData) {
 
             button_settings_similar_images_clear_cache.connect_clicked(move |_| {
                 let dialog = create_clear_cache_dialog(fl!("cache_clear_similar_images_title"), &settings_window);
-                dialog.show_all();
+                dialog.show();
 
                 let text_view_errors = text_view_errors.clone();
 
@@ -151,7 +151,7 @@ pub fn connect_settings(gui_data: &GuiData) {
                         }
 
                         messages.messages.push(fl!("cache_properly_cleared"));
-                        text_view_errors.buffer().unwrap().set_text(messages.create_messages_text().as_str());
+                        text_view_errors.buffer().set_text(messages.create_messages_text().as_str());
                     }
                     dialog.close();
                 });
@@ -164,7 +164,7 @@ pub fn connect_settings(gui_data: &GuiData) {
 
             button_settings_similar_videos_clear_cache.connect_clicked(move |_| {
                 let dialog = create_clear_cache_dialog(fl!("cache_clear_similar_videos_title"), &settings_window);
-                dialog.show_all();
+                dialog.show();
 
                 let text_view_errors = text_view_errors.clone();
 
@@ -176,7 +176,7 @@ pub fn connect_settings(gui_data: &GuiData) {
                         }
 
                         messages.messages.push(fl!("cache_properly_cleared"));
-                        text_view_errors.buffer().unwrap().set_text(messages.create_messages_text().as_str());
+                        text_view_errors.buffer().set_text(messages.create_messages_text().as_str());
                     }
                     dialog.close();
                 });
@@ -185,8 +185,8 @@ pub fn connect_settings(gui_data: &GuiData) {
     }
 }
 
-fn create_clear_cache_dialog(title_str: String, window_settings: &Window) -> gtk::Dialog {
-    let dialog = gtk::Dialog::builder().title(&title_str).transient_for(window_settings).build();
+fn create_clear_cache_dialog(title_str: String, window_settings: &Window) -> gtk4::Dialog {
+    let dialog = gtk4::Dialog::builder().title(&title_str).transient_for(window_settings).build();
     dialog.add_button(&fl!("general_ok_button"), ResponseType::Ok);
     dialog.add_button(&fl!("general_close_button"), ResponseType::Cancel);
 
@@ -196,9 +196,9 @@ fn create_clear_cache_dialog(title_str: String, window_settings: &Window) -> gtk
     let label4 = LabelBuilder::new().label(&fl!("cache_clear_message_label_4")).build();
 
     let internal_box = get_dialog_box_child(&dialog);
-    internal_box.add(&label);
-    internal_box.add(&label2);
-    internal_box.add(&label3);
-    internal_box.add(&label4);
+    internal_box.append(&label);
+    internal_box.append(&label2);
+    internal_box.append(&label3);
+    internal_box.append(&label4);
     dialog
 }

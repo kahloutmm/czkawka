@@ -3,8 +3,8 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 use crossbeam_channel::unbounded;
-use gtk::prelude::*;
-use gtk::Builder;
+use gtk4::prelude::*;use gtk4::Inhibit;
+use gtk4::Builder;
 
 use czkawka_core::big_file::BigFile;
 use czkawka_core::broken_files::BrokenFiles;
@@ -35,7 +35,7 @@ pub struct GuiData {
     pub builder: Builder,
 
     // Windows
-    pub window_main: gtk::Window,
+    pub window_main: gtk4::Window,
 
     pub main_notebook: GuiMainNotebook,
     pub upper_notebook: GuiUpperNotebook,
@@ -67,11 +67,11 @@ pub struct GuiData {
     pub preview_path: Rc<RefCell<String>>,
 
     //// Entry
-    pub entry_info: gtk::Entry,
+    pub entry_info: gtk4::Entry,
 
     //// Bottom
-    pub text_view_errors: gtk::TextView,
-    pub scrolled_window_errors: gtk::ScrolledWindow,
+    pub text_view_errors: gtk4::TextView,
+    pub scrolled_window_errors: gtk4::ScrolledWindow,
 
     // Used for sending stop signal to thread
     pub stop_sender: crossbeam_channel::Sender<()>,
@@ -79,15 +79,15 @@ pub struct GuiData {
 }
 
 impl GuiData {
-    pub fn new_with_application(application: &gtk::Application) -> Self {
+    pub fn new_with_application(application: &gtk4::Application) -> Self {
         //// Loading glade file content and build with it help UI
         let glade_src = include_str!("../ui/main_window.glade").to_string();
         let builder = Builder::from_string(glade_src.as_str());
 
         //// Windows
-        let window_main: gtk::Window = builder.object("window_main").unwrap();
-        window_main.show_all();
-        window_main.set_title("Czkawka");
+        let window_main: gtk4::Window = builder.object("window_main").unwrap();
+        window_main.show();
+        window_main.set_title(Some("Czkawka"));
 
         window_main.set_application(Some(application));
 
@@ -137,12 +137,12 @@ impl GuiData {
         let preview_path: Rc<RefCell<_>> = Rc::new(RefCell::new("".to_string()));
 
         //// Entry
-        let entry_info: gtk::Entry = builder.object("entry_info").unwrap();
+        let entry_info: gtk4::Entry = builder.object("entry_info").unwrap();
 
         //// Bottom
-        let text_view_errors: gtk::TextView = builder.object("text_view_errors").unwrap();
-        let scrolled_window_errors: gtk::ScrolledWindow = builder.object("scrolled_window_errors").unwrap();
-        scrolled_window_errors.show_all(); // Not sure why needed, but without it text view errors sometimes hide itself
+        let text_view_errors: gtk4::TextView = builder.object("text_view_errors").unwrap();
+        let scrolled_window_errors: gtk4::ScrolledWindow = builder.object("scrolled_window_errors").unwrap();
+        scrolled_window_errors.show(); // Not sure why needed, but without it text view errors sometimes hide itself
 
         // Used for sending stop signal to thread
         let (stop_sender, stop_receiver): (crossbeam_channel::Sender<()>, crossbeam_channel::Receiver<()>) = unbounded();

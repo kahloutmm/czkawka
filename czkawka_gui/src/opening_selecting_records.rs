@@ -1,11 +1,12 @@
 use crate::help_functions::*;
-use gdk::ModifierType;
-use gtk::prelude::*;
+use gdk4::ModifierType;
+use gtk4::prelude::*;
+use gtk4::{GestureClick, Inhibit};
 
 // TODO add option to open files and folders from context menu activated by pressing ONCE with right mouse button
 
-pub fn opening_enter_function_ported(event_controller: &gtk::EventControllerKey, _key_value: u32, key_code: u32, _modifier_type: ModifierType) -> bool {
-    let tree_view = event_controller.widget().unwrap().downcast::<gtk::TreeView>().unwrap();
+pub fn opening_enter_function_ported2(event_controller: &gtk4::EventControllerKey, _key_value: u32, key_code: u32, _modifier_type: ModifierType) -> bool {
+    let tree_view = event_controller.widget().unwrap().downcast::<gtk4::TreeView>().unwrap();
     #[cfg(debug_assertions)]
     {
         println!("key_code {}", key_code);
@@ -17,53 +18,66 @@ pub fn opening_enter_function_ported(event_controller: &gtk::EventControllerKey,
 }
 
 // GTK 4
-// pub fn opening_enter_function_ported_(event_controller: &gtk4::EventControllerKey, _key: gdk4::keys::Key, key_code: u32, _modifier_type: ModifierType) -> gtk4::Inhibit {
-//     let tree_view = event_controller.widget().unwrap().downcast::<gtk4::TreeView>().unwrap();
-//     #[cfg(debug_assertions)]
-//         {
-//             println!("key_code {}", key_code);
-//         }
-//
-//     let nt_object = get_notebook_object_from_tree_view(&tree_view);
-//     handle_tree_keypress(&tree_view, key_code, nt_object.column_name, nt_object.column_path, nt_object.column_selection);
-//     Inhibit(false) // True catches signal, and don't send it to function, e.g. up button is catched and don't move selection
-// }
-
-pub fn opening_double_click_function(tree_view: &gtk::TreeView, event: &gdk::EventButton) -> gtk::Inhibit {
-    let nt_object = get_notebook_object_from_tree_view(tree_view);
-    if event.event_type() == gdk::EventType::DoubleButtonPress && event.button() == 1 {
-        common_open_function(tree_view, nt_object.column_name, nt_object.column_path, OpenMode::PathAndName);
-    } else if event.event_type() == gdk::EventType::DoubleButtonPress && event.button() == 3 {
-        common_open_function(tree_view, nt_object.column_name, nt_object.column_path, OpenMode::OnlyPath);
+pub fn opening_enter_function_ported(event_controller: &gtk4::EventControllerKey, _key: gdk4::keys::Key, key_code: u32, _modifier_type: ModifierType) -> gtk4::Inhibit {
+    let tree_view = event_controller.widget().unwrap().downcast::<gtk4::TreeView>().unwrap();
+    #[cfg(debug_assertions)]
+    {
+        println!("key_code {}", key_code);
     }
-    gtk::Inhibit(false)
+
+    let nt_object = get_notebook_object_from_tree_view(&tree_view);
+    handle_tree_keypress(&tree_view, key_code, nt_object.column_name, nt_object.column_path, nt_object.column_selection);
+    Inhibit(false) // True catches signal, and don't send it to function, e.g. up button is catched and don't move selection
 }
+
+pub fn opening_double_click_function(gesture_click: &GestureClick, number_of_clicks: i32, b: f64, c: f64) {
+    let tree_view = gesture_click.widget().unwrap().downcast::<gtk4::TreeView>().unwrap();
+
+    let nt_object = get_notebook_object_from_tree_view(&tree_view);
+    if number_of_clicks == 2 {
+        if gesture_click.current_button() == 1 {
+            common_open_function(&tree_view, nt_object.column_name, nt_object.column_path, OpenMode::PathAndName);
+        } else if gesture_click.current_button() == 3 {
+            common_open_function(&tree_view, nt_object.column_name, nt_object.column_path, OpenMode::OnlyPath);
+        }
+    }
+}
+
+// pub fn opening_double_click_function(tree_view: &gtk4::TreeView, event: &gdk4::EventButton) -> gtk4::Inhibit {
+//     let nt_object = get_notebook_object_from_tree_view(tree_view);
+//     if event.event_type() == gdk4::EventType::DoubleButtonPress && event.button() == 1 {
+//         common_open_function(tree_view, nt_object.column_name, nt_object.column_path, OpenMode::PathAndName);
+//     } else if event.event_type() == gdk4::EventType::DoubleButtonPress && event.button() == 3 {
+//         common_open_function(tree_view, nt_object.column_name, nt_object.column_path, OpenMode::OnlyPath);
+//     }
+//     gtk4::Inhibit(false)
+// }
 
 enum OpenMode {
     OnlyPath,
     PathAndName,
 }
 
-fn common_mark_function(tree_view: &gtk::TreeView, column_name: i32) {
+fn common_mark_function(tree_view: &gtk4::TreeView, column_name: i32) {
     let selection = tree_view.selection();
     let (selected_rows, tree_model) = selection.selected_rows();
 
     let model = get_list_store(tree_view);
 
     for tree_path in selected_rows.iter().rev() {
-        let value = !tree_model.value(&tree_model.iter(tree_path).unwrap(), column_name).get::<bool>().unwrap();
+        let value = !tree_model.get(&tree_model.iter(tree_path).unwrap(), column_name).get::<bool>().unwrap();
         model.set_value(&tree_model.iter(tree_path).unwrap(), column_name as u32, &value.to_value());
     }
 }
 
-fn common_open_function(tree_view: &gtk::TreeView, column_name: i32, column_path: i32, opening_mode: OpenMode) {
+fn common_open_function(tree_view: &gtk4::TreeView, column_name: i32, column_path: i32, opening_mode: OpenMode) {
     let selection = tree_view.selection();
     let (selected_rows, tree_model) = selection.selected_rows();
 
     for tree_path in selected_rows.iter().rev() {
         let end_path;
-        let name = tree_model.value(&tree_model.iter(tree_path).unwrap(), column_name).get::<String>().unwrap();
-        let path = tree_model.value(&tree_model.iter(tree_path).unwrap(), column_path).get::<String>().unwrap();
+        let name = tree_model.get(&tree_model.iter(tree_path).unwrap(), column_name).get::<String>().unwrap();
+        let path = tree_model.get(&tree_model.iter(tree_path).unwrap(), column_path).get::<String>().unwrap();
 
         match opening_mode {
             OpenMode::OnlyPath => {
@@ -82,7 +96,7 @@ fn common_open_function(tree_view: &gtk::TreeView, column_name: i32, column_path
     }
 }
 
-fn handle_tree_keypress(tree_view: &gtk::TreeView, key_code: u32, name_column: i32, path_column: i32, mark_column: i32) {
+fn handle_tree_keypress(tree_view: &gtk4::TreeView, key_code: u32, name_column: i32, path_column: i32, mark_column: i32) {
     match key_code {
         KEY_ENTER => {
             // Enter
@@ -96,8 +110,8 @@ fn handle_tree_keypress(tree_view: &gtk::TreeView, key_code: u32, name_column: i
     }
 }
 
-pub fn select_function_duplicates(_tree_selection: &gtk::TreeSelection, tree_model: &gtk::TreeModel, tree_path: &gtk::TreePath, _is_path_currently_selected: bool) -> bool {
-    let color = tree_model.value(&tree_model.iter(tree_path).unwrap(), ColumnsDuplicates::Color as i32).get::<String>().unwrap();
+pub fn select_function_duplicates(_tree_selection: &gtk4::TreeSelection, tree_model: &gtk4::TreeModel, tree_path: &gtk4::TreePath, _is_path_currently_selected: bool) -> bool {
+    let color = tree_model.get(&tree_model.iter(tree_path).unwrap(), ColumnsDuplicates::Color as i32).get::<String>().unwrap();
 
     if color == HEADER_ROW_COLOR {
         return false;
@@ -106,8 +120,8 @@ pub fn select_function_duplicates(_tree_selection: &gtk::TreeSelection, tree_mod
     true
 }
 
-pub fn select_function_same_music(_tree_selection: &gtk::TreeSelection, tree_model: &gtk::TreeModel, tree_path: &gtk::TreePath, _is_path_currently_selected: bool) -> bool {
-    let color = tree_model.value(&tree_model.iter(tree_path).unwrap(), ColumnsSameMusic::Color as i32).get::<String>().unwrap();
+pub fn select_function_same_music(_tree_selection: &gtk4::TreeSelection, tree_model: &gtk4::TreeModel, tree_path: &gtk4::TreePath, _is_path_currently_selected: bool) -> bool {
+    let color = tree_model.get(&tree_model.iter(tree_path).unwrap(), ColumnsSameMusic::Color as i32).get::<String>().unwrap();
 
     if color == HEADER_ROW_COLOR {
         return false;
@@ -116,8 +130,8 @@ pub fn select_function_same_music(_tree_selection: &gtk::TreeSelection, tree_mod
     true
 }
 
-pub fn select_function_similar_images(_tree_selection: &gtk::TreeSelection, tree_model: &gtk::TreeModel, tree_path: &gtk::TreePath, _is_path_currently_selected: bool) -> bool {
-    let color = tree_model.value(&tree_model.iter(tree_path).unwrap(), ColumnsSimilarImages::Color as i32).get::<String>().unwrap();
+pub fn select_function_similar_images(_tree_selection: &gtk4::TreeSelection, tree_model: &gtk4::TreeModel, tree_path: &gtk4::TreePath, _is_path_currently_selected: bool) -> bool {
+    let color = tree_model.get(&tree_model.iter(tree_path).unwrap(), ColumnsSimilarImages::Color as i32).get::<String>().unwrap();
 
     if color == HEADER_ROW_COLOR {
         return false;
@@ -126,8 +140,8 @@ pub fn select_function_similar_images(_tree_selection: &gtk::TreeSelection, tree
     true
 }
 
-pub fn select_function_similar_videos(_tree_selection: &gtk::TreeSelection, tree_model: &gtk::TreeModel, tree_path: &gtk::TreePath, _is_path_currently_selected: bool) -> bool {
-    let color = tree_model.value(&tree_model.iter(tree_path).unwrap(), ColumnsSimilarVideos::Color as i32).get::<String>().unwrap();
+pub fn select_function_similar_videos(_tree_selection: &gtk4::TreeSelection, tree_model: &gtk4::TreeModel, tree_path: &gtk4::TreePath, _is_path_currently_selected: bool) -> bool {
+    let color = tree_model.get(&tree_model.iter(tree_path).unwrap(), ColumnsSimilarVideos::Color as i32).get::<String>().unwrap();
 
     if color == HEADER_ROW_COLOR {
         return false;

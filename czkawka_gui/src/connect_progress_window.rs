@@ -1,5 +1,5 @@
 use futures::StreamExt;
-use gtk::prelude::*;
+use gtk4::prelude::*;use gtk4::Inhibit;
 
 use crate::fl;
 use czkawka_core::{big_file, broken_files, duplicate, empty_files, empty_folder, invalid_symlinks, same_music, similar_images, similar_videos, temporary};

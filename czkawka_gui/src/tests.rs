@@ -4,7 +4,7 @@ use crate::GuiData;
 
 pub fn validate_notebook_data(gui_data: &GuiData) {
     // Test treeviews names, each treeview should have set name same as variable name
-    let tree_view_arr: [&gtk::TreeView; NUMBER_OF_NOTEBOOK_MAIN_TABS] = [
+    let tree_view_arr: [&gtk4::TreeView; NUMBER_OF_NOTEBOOK_MAIN_TABS] = [
         &gui_data.main_notebook.tree_view_duplicate_finder,
         &gui_data.main_notebook.tree_view_similar_videos_finder,
         &gui_data.main_notebook.tree_view_temporary_files_finder,

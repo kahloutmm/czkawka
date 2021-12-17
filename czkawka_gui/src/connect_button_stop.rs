@@ -1,4 +1,5 @@
-use gtk::prelude::*;
+use gtk4::prelude::*;
+use gtk4::Inhibit;
 
 use crate::gui_data::GuiData;
 use crate::help_functions::KEY_ENTER;
@@ -13,17 +14,17 @@ pub fn connect_button_stop(gui_data: &GuiData) {
         }
     });
 
-    let button_stop_in_dialog = gui_data.progress_window.button_stop_in_dialog.clone();
-    let stop_sender = gui_data.stop_sender.clone();
-    button_stop_in_dialog.connect_button_release_event(move |_, _e| {
-        stop_sender.send(()).unwrap();
-        gtk::Inhibit(false)
-    });
-
-    // let gc_button_stop_in_dialog = gui_data.progress_window.gc_button_stop_in_dialog.clone();
+    // let button_stop_in_dialog = gui_data.progress_window.button_stop_in_dialog.clone();
     // let stop_sender = gui_data.stop_sender.clone();
-    // gc_button_stop_in_dialog.connect_button_release_event(move |_, _e| {
+    // button_stop_in_dialog.connect_button_release_event(move |_, _e| {
     //     stop_sender.send(()).unwrap();
-    //     gtk::Inhibit(false)
+    //     gtk4::Inhibit(false)
     // });
+
+    let gc_button_stop_in_dialog = gui_data.progress_window.gc_button_stop_in_dialog.clone();
+    let stop_sender = gui_data.stop_sender.clone();
+    gc_button_stop_in_dialog.connect_button_release_event(move |_, _e| {
+        stop_sender.send(()).unwrap();
+        gtk4::Inhibit(false)
+    });
 }
