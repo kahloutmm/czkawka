@@ -66,8 +66,8 @@ sd -s "window_progress.set_title(\"Czkawka\")" "window_progress.set_title(Some(\
 
 # NOT WORKING # sd "connect_delete_event\(([^,^\n]+), _" "connect_delete_event(${1" czkawka_gui/src/*.rs
 sd -s "connect_delete_event(|dialog, _|" "connect_close_request(|dialog|" czkawka_gui/src/*.rs
-sd -s "connect_delete_event(move |window, _|" "connect_close_request(|window|" czkawka_gui/src/*.rs
-sd -s "connect_delete_event(move |_, _|" "connect_close_request(|_|" czkawka_gui/src/*.rs
+sd -s "connect_delete_event(move |window, _|" "connect_close_request(move |window|" czkawka_gui/src/*.rs
+sd -s "connect_delete_event(move |_, _|" "connect_close_request(move |_|" czkawka_gui/src/*.rs
 
 # GTK BIN not exists, probably widget or button is better
 sd -s "{Bin," "{" czkawka_gui/src/*.rs
@@ -101,19 +101,8 @@ sd -s 'label(&fl!("settings_multiple_delete_outdated_cache_checkbutton")' 'label
 
 sd -s 'label(&fl!("upper_recursive_button")' 'label(Some(&fl!("upper_recursive_button"))' czkawka_gui/src/*.rs
 
-
-# TODO double click not working
-sd -s "tree_view.connect_button_press_event(opening_double_click_function);" "//tree_view.connect_button_press_event(opening_double_click_function);" czkawka_gui/src/*.rs
-
-# TODO what is instead filenames?
-sd -s "folders = file_chooser.filenames();" "mut folders = Vec::new();folders.push(Path::new(\"\").to_path_buf());" czkawka_gui/src/*.rs
-sd -s "folder = chooser.filenames();" "mut folder = Vec::new();folder.push(Path::new(\"\").to_path_buf());" czkawka_gui/src/*.rs
-
 # TODO Menubutton don't have connect_clicked
 sd -s "buttons_select.connect_clicked" "buttons_select.connect_activate" czkawka_gui/src/*.rs
-
-# Needs to add controller
-sd "EventControllerKey::new\([^\)]+\)" "EventControllerKey::new()" czkawka_gui/src/*.rs
 
 
 # Errors Manual
@@ -123,12 +112,6 @@ sd "EventControllerKey::new\([^\)]+\)" "EventControllerKey::new()" czkawka_gui/s
 
 # TODO
 get_custom_label_from_label_with_image - takes bin, but should also takes widget or menubutton
-connect_button_release_event is missing  - button_stop_in_dialog.connect_button_release_event
-self.notebook_upper.children() - children are not visible
-tree_view.connect_button_release_event(move |tree_view, _event| - is missing
-missing move in closures above - save_configuration(false, &gui_data.upper_notebook and below et stop_sender = gui_data.stop_sender.clone();
 missing resize, what should I do?
 - change upper window from paned to normal box, because paned behave strange
-- Convert FileDialog to FileDialogNative
-- Convert FileDialog to be async
 

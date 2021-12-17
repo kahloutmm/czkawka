@@ -550,13 +550,14 @@ pub fn clean_invalid_headers(model: &gtk4::ListStore, column_color: i32) {
 //     panic!("Button doesn't have proper custom label child");
 // }
 pub fn get_custom_label_from_label_with_image<P: IsA<gtk4::Widget>>(button: &P) -> gtk4::Label {
-    let internal_box = button.child().unwrap().downcast::<gtk4::Box>().unwrap();
-    for child in internal_box.children() {
-        if let Ok(t) = child.downcast::<gtk4::Label>() {
-            return t;
-        }
-    }
-    panic!("Button doesn't have proper custom label child");
+    // let internal_box = button.child().unwrap().downcast::<gtk4::Box>().unwrap();
+    // for child in internal_box.children() {
+    //     if let Ok(t) = child.downcast::<gtk4::Label>() {
+    //         return t;
+    //     }
+    // }
+    // panic!("Button doesn't have proper custom label child");
+    gtk4::Label::new(None)
 }
 
 // GTK 4

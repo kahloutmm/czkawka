@@ -3,7 +3,8 @@
 #![allow(clippy::collapsible_else_if)]
 #![allow(clippy::too_many_arguments)]
 
-use gtk4::prelude::*;use gtk4::Inhibit;
+use gtk4::prelude::*;
+use gtk4::Inhibit;
 
 use czkawka_core::*;
 
@@ -154,7 +155,7 @@ fn main() {
 
         let window_main = gui_data.window_main.clone();
         let taskbar_state = gui_data.taskbar_state.clone();
-        window_main.connect_close_request(|_| {
+        window_main.connect_close_request(move |_| {
             save_configuration(false, &gui_data.upper_notebook, &gui_data.settings, &gui_data.text_view_errors); // Save configuration at exit
             taskbar_state.borrow_mut().release();
             Inhibit(false)

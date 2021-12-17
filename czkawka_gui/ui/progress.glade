@@ -1,31 +1,32 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Created with Cambalache 0.8.0 -->
 <interface>
   <requires lib="gtk" version="4.0"/>
   <object class="GtkDialog" id="window_progress">
     <child internal-child="content_area">
       <object class="GtkBox">
-        <property name="visible">0</property>
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
+        <property name="visible">0</property>
         <child>
           <object class="GtkBox">
-            <property name="margin-start">10</property>
-            <property name="margin-end">10</property>
-            <property name="margin-top">10</property>
             <property name="margin-bottom">10</property>
+            <property name="margin-end">10</property>
+            <property name="margin-start">10</property>
+            <property name="margin-top">10</property>
             <property name="orientation">vertical</property>
             <property name="spacing">10</property>
             <child>
               <object class="GtkGrid" id="grid_progress_stages">
-                <property name="vexpand">1</property>
-                <property name="valign">center</property>
-                <property name="margin-start">2</property>
                 <property name="margin-end">2</property>
+                <property name="margin-start">2</property>
                 <property name="margin-top">2</property>
+                <property name="valign">center</property>
+                <property name="vexpand">1</property>
                 <child>
                   <object class="GtkLabel" id="label_progress_all_stages">
-                    <property name="name">label_progress_all_stages</property>
                     <property name="label" translatable="yes">All stages: </property>
+                    <property name="name">label_progress_all_stages</property>
                     <layout>
                       <property name="column">0</property>
                       <property name="row">1</property>
@@ -45,8 +46,8 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="label_progress_current_stage">
-                    <property name="name">label_progress_current_stage</property>
                     <property name="label" translatable="yes">Current stage:  </property>
+                    <property name="name">label_progress_current_stage</property>
                     <layout>
                       <property name="column">0</property>
                       <property name="row">0</property>
@@ -71,11 +72,11 @@
             </child>
             <child>
               <object class="GtkButton" id="button_stop_in_dialog">
-                <property name="valign">center</property>
                 <property name="focusable">1</property>
-                <property name="receives-default">1</property>
                 <property name="halign">end</property>
                 <property name="margin-end">2</property>
+                <property name="receives-default">1</property>
+                <property name="valign">center</property>
                 <child>
                   <object class="GtkBox">
                     <child>
@@ -99,14 +100,8 @@
     </child>
     <child>
       <object class="GtkBox">
-        <property name="valign">center</property>
         <property name="can-focus">False</property>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
+        <property name="valign">center</property>
       </object>
     </child>
   </object>
