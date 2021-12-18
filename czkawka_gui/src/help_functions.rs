@@ -549,15 +549,27 @@ pub fn clean_invalid_headers(model: &gtk4::ListStore, column_color: i32) {
 //     }
 //     panic!("Button doesn't have proper custom label child");
 // }
-pub fn get_custom_label_from_label_with_image<P: IsA<gtk4::Widget>>(button: &P) -> gtk4::Label {
-    // let internal_box = button.child().unwrap().downcast::<gtk4::Box>().unwrap();
-    // for child in internal_box.children() {
-    //     if let Ok(t) = child.downcast::<gtk4::Label>() {
-    //         return t;
-    //     }
-    // }
-    // panic!("Button doesn't have proper custom label child");
-    gtk4::Label::new(None)
+pub fn get_custom_label_from_button_with_image<P: IsA<gtk4::Widget>>(button: &P) -> gtk4::Label {
+    let internal_box = button.first_child().unwrap().downcast::<gtk4::Box>().unwrap();
+    for child in get_all_children(&internal_box) {
+        if let Ok(t) = child.downcast::<gtk4::Label>() {
+            return t;
+        }
+    }
+    panic!("Button doesn't have proper custom label child");
+}
+pub fn get_custom_label_from_menubutton_with_image<P: IsA<gtk4::Widget>>(button: &P) -> gtk4::Label {
+    println!("{:?}", get_all_children(button));
+    for c1 in get_all_children(button) {
+        if let Ok(internal_box) = c1.downcast::<gtk4::Box>() {
+            for child in get_all_children(&internal_box) {
+                if let Ok(t) = child.downcast::<gtk4::Label>() {
+                    return t;
+                }
+            }
+        }
+    }
+    panic!("Menu Button doesn't have proper custom label child");
 }
 
 // GTK 4

@@ -30,7 +30,7 @@ pub fn opening_enter_function_ported(event_controller: &gtk4::EventControllerKey
     Inhibit(false) // True catches signal, and don't send it to function, e.g. up button is catched and don't move selection
 }
 
-pub fn opening_double_click_function(gesture_click: &GestureClick, number_of_clicks: i32, b: f64, c: f64) {
+pub fn opening_double_click_function(gesture_click: &GestureClick, number_of_clicks: i32, _b: f64, _c: f64) {
     let tree_view = gesture_click.widget().unwrap().downcast::<gtk4::TreeView>().unwrap();
 
     let nt_object = get_notebook_object_from_tree_view(&tree_view);

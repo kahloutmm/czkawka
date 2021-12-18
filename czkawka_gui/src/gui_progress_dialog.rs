@@ -1,5 +1,5 @@
 use crate::fl;
-use crate::help_functions::get_custom_label_from_label_with_image;
+use crate::help_functions::get_custom_label_from_button_with_image;
 use gtk4::prelude::*;
 use gtk4::Inhibit;
 use gtk4::{Builder, EventControllerKey, Window};
@@ -62,7 +62,7 @@ impl GuiProgressDialog {
         }
     }
     pub fn update_language(&self) {
-        get_custom_label_from_label_with_image(&self.button_stop_in_dialog.clone()).set_text(&fl!("progress_stop_button"));
+        get_custom_label_from_button_with_image(&self.button_stop_in_dialog.clone()).set_text(&fl!("progress_stop_button"));
 
         self.label_progress_current_stage.set_label(&fl!("progress_current_stage"));
         self.label_progress_all_stages.set_label(&fl!("progress_all_stages"));

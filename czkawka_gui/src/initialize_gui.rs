@@ -479,6 +479,7 @@ fn connect_event_mouse(gui_data: &GuiData) {
         gui_data.main_notebook.gc_tree_view_invalid_symlinks.clone(),
         gui_data.main_notebook.gc_tree_view_broken_files.clone(),
     ] {
+        gc.set_button(0);
         gc.connect_pressed(opening_double_click_function);
     }
 
