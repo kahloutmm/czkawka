@@ -9,8 +9,9 @@ use std::thread::sleep;
 use std::time::{Duration, SystemTime};
 use std::{mem, thread};
 
-use audiotags::Tag;
 use crossbeam_channel::Receiver;
+use lofty::read_from_path;
+use lofty::Accessor;
 use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
 
@@ -361,10 +362,26 @@ impl SameMusic {
                     return None;
                 }
 
-                let tag = match Tag::new().read_from_path(&path) {
+                let tagged_file = match read_from_path(&path, true) {
                     Ok(t) => t,
-                    Err(_inspected) => return Some(Some(music_entry)), // Data not in utf-8, etc., TODO this should be probably added to warnings, errors
+                    Err(_inspected) => {
+                        println!("Failed to open {}", path);
+                        return Some(Some(music_entry));
+                    }
                 };
+
+                // let properties = tagged_file.properties();
+
+                let tag = match tagged_file.primary_tag() {
+                    Some(t) => t,
+                    None => {
+                        println!("File {} don't have valid tag", path);
+                        return Some(Some(music_entry));
+                    }
+                };
+
+                let aa = tag.title();
+                println!("a {:?}", tag.items());
 
                 music_entry.title = match tag.title() {
                     Some(t) => t.to_string(),
@@ -374,15 +391,15 @@ impl SameMusic {
                     Some(t) => t.to_string(),
                     None => "".to_string(),
                 };
-                music_entry.album_title = match tag.album_title() {
-                    Some(t) => t.to_string(),
-                    None => "".to_string(),
-                };
-                music_entry.album_artist = match tag.album_artist() {
-                    Some(t) => t.to_string(),
-                    None => "".to_string(),
-                };
-                music_entry.year = tag.year().unwrap_or(0);
+                // music_entry.album_title = match tag.album_title() {
+                //     Some(t) => t.to_string(),
+                //     None => "".to_string(),
+                // };
+                // music_entry.album_artist = match tag.album_artist() {
+                //     Some(t) => t.to_string(),
+                //     None => "".to_string(),
+                // };
+                // music_entry.year = tag.year().unwrap_or(0);
 
                 Some(Some(music_entry))
             })

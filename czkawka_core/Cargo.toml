@@ -25,7 +25,7 @@ hamming = "0.1.3"
 
 # Needed by same music
 bitflags = "1.3.2"
-audiotags = "0.2.7182"
+lofty="0.3.3"
 
 # Futures - needed by async progress sender
 futures = "0.3.19"
@@ -59,6 +59,7 @@ once_cell = "1.9.0"
 # Raw image files
 rawloader = "0.37.0"
 imagepipe = "0.4.0"
+
 
 [features]
 default = []
