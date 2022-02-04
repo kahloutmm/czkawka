@@ -10,8 +10,8 @@ use std::time::{Duration, SystemTime};
 use std::{mem, thread};
 
 use crossbeam_channel::Receiver;
-use lofty::read_from_path;
 use lofty::Accessor;
+use lofty::{read_from_path, ItemKey};
 use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
 
@@ -134,7 +134,7 @@ impl SameMusic {
             duplicated_music_entries: vec![],
             music_to_check: Default::default(),
             approximate_comparison: true,
-            use_cache: true,
+            use_cache: false,
             delete_outdated_cache: true,
             use_reference_folders: false,
             duplicated_music_entries_referenced: vec![],
@@ -370,7 +370,7 @@ impl SameMusic {
                     }
                 };
 
-                // let properties = tagged_file.properties();
+                let properties = tagged_file.properties();
 
                 let tag = match tagged_file.primary_tag() {
                     Some(t) => t,
@@ -380,8 +380,18 @@ impl SameMusic {
                     }
                 };
 
-                let aa = tag.title();
                 println!("a {:?}", tag.items());
+                let track_title = tag.get_string(&ItemKey::TrackTitle).unwrap_or("").to_string();
+                let track_artist = tag.get_string(&ItemKey::TrackArtist).unwrap_or("").to_string();
+                let year = tag.get_string(&ItemKey::Year).unwrap_or("").to_string();
+                let length = tag.get_string(&ItemKey::Length).unwrap_or("").to_string();
+                let genre = tag.get_string(&ItemKey::Genre).unwrap_or("").to_string();
+                let bitrate_raw = properties.audio_bitrate().unwrap_or(0);
+                let bitrate = match bitrate_raw {
+                    0 => "".to_string(),
+                    k => format!("{} kbps", k),
+                };
+                println!("{:?}", bitrate);
 
                 music_entry.title = match tag.title() {
                     Some(t) => t.to_string(),
